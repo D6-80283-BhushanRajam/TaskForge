@@ -175,7 +175,7 @@ public class UserController {
 			authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(userLoginRequest.getEmailId(), userLoginRequest.getPassword()));
 		} catch (Exception ex) {
-			LOG.error("Autthentication Failed!!!");
+			LOG.error("Authentication Failed!!!");
 			response.setSuccess(true);
 			response.setResponseMessage("Failed to Login");
 			return new ResponseEntity<UserLoginResponseDto>(response, HttpStatus.BAD_REQUEST);
@@ -193,7 +193,8 @@ public class UserController {
 		if (jwtToken != null) {
 
 			user = userService.getUserByEmailId(userLoginRequest.getEmailId());
-			
+			System.out.println(user);
+			if(user.getStatus()==1) {
 			useLoginResponse = User.toUserLoginResponse(user);
 			useLoginResponse.setJwtToken(jwtToken);
 			
@@ -201,7 +202,12 @@ public class UserController {
 
 			response.setSuccess(true);
 			response.setResponseMessage("Logged in Successful..!!!");
-			return new ResponseEntity<UserLoginResponseDto>(response, HttpStatus.OK);
+			return new ResponseEntity<UserLoginResponseDto>(response, HttpStatus.OK);}
+			else {
+		        response.setSuccess(false);
+		        response.setResponseMessage("Access Denied : Inactive User");
+		        return new ResponseEntity<UserLoginResponseDto>(response, HttpStatus.UNAUTHORIZED);
+		    }
 		
 		}
 
@@ -225,12 +231,17 @@ public class UserController {
 			response.setResponseMessage("Failed to change the password");
 			return new ResponseEntity<CommonApiResponse>(response, HttpStatus.OK);
 		}
-		
+//		System.out.println(user);
 		String encodedPassword = passwordEncoder.encode(user.getPassword());
 		
 		User existingUser = this.userService.getUserById(user.getUserId());
+		String oldPass=user.getOldPassword();
+		boolean result =  passwordEncoder.matches(oldPass, existingUser.getPassword());
+		if (result) {
+//		System.out.println(existingUser);
+//		System.out.println(result);
 		existingUser.setPassword(encodedPassword);
-
+		
 		User updatedUser = userService.registerUser(existingUser);
 
 		if (updatedUser != null) {
@@ -243,7 +254,15 @@ public class UserController {
 			response.setSuccess(true);
 			response.setResponseMessage("failed to change the password");
 			return new ResponseEntity<CommonApiResponse>(response, HttpStatus.OK);
+			 }
 		}
+		
+		else {
+			response.setSuccess(false);
+			response.setResponseMessage("Old password doesn't match");
+			return new ResponseEntity<CommonApiResponse>(response, HttpStatus.OK);
+		}
+	
 	}
 	
 	@DeleteMapping("delete")
@@ -286,16 +305,46 @@ public class UserController {
 		return new ResponseEntity<UsersResponseDto>(response, HttpStatus.OK);
 	}
 	
+	@GetMapping("manager/deletedAll")
+	public ResponseEntity<UsersResponseDto> getAllDeletedManager() {
+
+		LOG.info("recieved request for getting ALL Deleted Managers!!!");
+
+		UsersResponseDto response = new UsersResponseDto();
+		
+		List<User> dlmanagers = this.userService.getUsersByRoleAndStatus(UserRole.MANAGER.value(), UserStatus.DELETED.value());
+		
+		response.setUsers(dlmanagers);
+		response.setSuccess(true);
+		response.setResponseMessage("All deleted managers fetched successfully");
+		return new ResponseEntity<UsersResponseDto>(response, HttpStatus.OK);
+	}
+	
 	@GetMapping("employee/all")
 	public ResponseEntity<UsersResponseDto> getAllEmployee() {
 		System.out.println("recieved request for getting ALL Employees!!!");
 		
 		UsersResponseDto response = new UsersResponseDto();
 		List<User> employees = this.userService.getUsersByRoleAndStatus(UserRole.EMPLOYEE.value(), UserStatus.ACTIVE.value());
-		
+		List<User> managers = this.userService.getUsersByRoleAndStatus(UserRole.MANAGER.value(), UserStatus.ACTIVE.value());
+		employees.addAll(managers);
 		response.setUsers(employees);
 		response.setSuccess(true);
 		response.setResponseMessage("employees fetched successfully");
+		return new ResponseEntity<UsersResponseDto>(response, HttpStatus.OK);
+	}
+	
+	@GetMapping("employee/deletedAll")
+	public ResponseEntity<UsersResponseDto> getAllDeletedEmployee() {
+		System.out.println("recieved request for getting ALL Deleted Employees!!!");
+		
+		UsersResponseDto response = new UsersResponseDto();
+		List<User> dlemployees = this.userService.getUsersByRoleAndStatus(UserRole.EMPLOYEE.value(), UserStatus.DELETED.value());
+		List<User> dlmanagers = this.userService.getUsersByRoleAndStatus(UserRole.MANAGER.value(), UserStatus.DELETED.value());
+		dlemployees.addAll(dlmanagers);
+		response.setUsers(dlemployees);
+		response.setSuccess(true);
+		response.setResponseMessage("All deleted employees fetched successfully");
 		return new ResponseEntity<UsersResponseDto>(response, HttpStatus.OK);
 	}
 }
