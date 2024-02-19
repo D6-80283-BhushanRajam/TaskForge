@@ -1,4 +1,6 @@
 import carousel from "../images/task_slider.png";
+import carousel1 from "../images/task_slider1.png";
+import carousel2 from "../images/task_slider2.png";
 
 const Carousel = () => {
   return (
@@ -34,10 +36,10 @@ const Carousel = () => {
           <img src={carousel} className="d-block w-100" alt="..." />
         </div>
         <div className="carousel-item">
-          <img src={carousel} className="d-block w-100" alt="..." />
+          <img src={carousel1} className="d-block w-100" alt="..." />
         </div>
         <div className="carousel-item">
-          <img src={carousel} className="d-block w-100" alt="..." />
+          <img src={carousel2} className="d-block w-100" alt="..." />
         </div>
       </div>
       <button
