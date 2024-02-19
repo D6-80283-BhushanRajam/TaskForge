@@ -156,7 +156,7 @@ const UpdateProjectStatus = () => {
             </div>
 
             <form>
-              <div class="col">
+              <div className="col">
                 <label htmlFor="quantity" className="form-label">
                   <b>Status</b>
                 </label>
@@ -174,10 +174,10 @@ const UpdateProjectStatus = () => {
                 </select>
               </div>
 
-              <div class="col">
+              <div className="col">
                 <button
                   type="submit"
-                  class="btn bg-color btn-sm custom-bg-text mt-4"
+                  className="btn bg-color btn-sm custom-bg-text mt-4"
                   onClick={updateProjectStatus}
                 >
                   Update Status
