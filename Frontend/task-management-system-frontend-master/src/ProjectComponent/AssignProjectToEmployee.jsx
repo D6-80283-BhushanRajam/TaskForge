@@ -156,9 +156,9 @@ const AssignProjectToEmployee = () => {
             </div>
 
             <form>
-              <div class="col">
+              <div className="col">
                 <label htmlFor="quantity" className="form-label">
-                  <b>Assign Project To Emplooyee</b>
+                  <b>Assign Project To Employee</b>
                 </label>
                 <select
                   name="employeeId"
@@ -168,21 +168,23 @@ const AssignProjectToEmployee = () => {
                 >
                   <option value="">Select Employee</option>
 
-                  {allEmployees.map((employeee) => {
+                  {allEmployees.map((employee) => {
+                      if(employee.role==="employee"){
+
                     return (
-                      <option value={employeee.id}>
+                      <option value={employee.id}>
                         {" "}
-                        {employeee.firstName + " " + employeee.lastName}{" "}
+                        {employee.id+"-"+employee.firstName + " " + employee.lastName}{" "}
                       </option>
                     );
-                  })}
+                  }})}
                 </select>
               </div>
 
-              <div class="col">
+              <div className="col">
                 <button
                   type="submit"
-                  class="btn bg-color btn-sm custom-bg-text mt-4"
+                  className="btn bg-color btn-sm custom-bg-text mt-4"
                   onClick={assignProject}
                 >
                   Update

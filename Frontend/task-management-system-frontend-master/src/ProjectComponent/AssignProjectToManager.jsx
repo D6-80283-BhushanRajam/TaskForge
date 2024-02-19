@@ -28,6 +28,7 @@ const AssignProjectToManager = () => {
     const getAllManager = async () => {
       const allManager = await retrieveAllManagers();
       if (allManager) {
+        console.log(allManager);
         setAllManagers(allManager.users);
       }
     };
@@ -156,7 +157,7 @@ const AssignProjectToManager = () => {
             </div>
 
             <form>
-              <div class="col">
+              <div className="col">
                 <label htmlFor="quantity" className="form-label">
                   <b>Assign Project To Manager</b>
                 </label>
@@ -172,17 +173,17 @@ const AssignProjectToManager = () => {
                     return (
                       <option value={manager.id}>
                         {" "}
-                        {manager.firstName + " " + manager.lastName}{" "}
+                        {manager.id+"-"+manager.firstName + " " + manager.lastName}{" "}
                       </option>
                     );
                   })}
                 </select>
               </div>
 
-              <div class="col">
+              <div className="col">
                 <button
                   type="submit"
-                  class="btn bg-color btn-sm custom-bg-text mt-4"
+                  className="btn bg-color btn-sm custom-bg-text mt-4"
                   onClick={assignProject}
                 >
                   Update
